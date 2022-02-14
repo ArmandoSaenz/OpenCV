@@ -366,7 +366,6 @@ int main()
     int IDSelected;
     CameraList camList;
     CameraPtr pCam = nullptr;
-    INodeMap& nodeMapTLDevice;
     /*
     FILE* tempFile = fopen("test.txt", "w+");
     if (tempFile == nullptr)
@@ -423,7 +422,7 @@ int main()
         {
             // Select camera
             pCam = camList.GetByIndex(i);
-            nodeMapTLDevice = pCam->GetTLDeviceNodeMap();
+            INodeMap& nodeMapTLDevice = pCam->GetTLDeviceNodeMap();
             CStringPtr ptrStringSerial = nodeMapTLDevice.GetNode("DeviceSerialNumber");
             CStringPtr ptrStringID = nodeMapTLDevice.GetNode("DeviceID");
             CStringPtr ptrStringModelName = nodeMapTLDevice.GetNode("DeviceModelName");
@@ -437,30 +436,29 @@ int main()
     }
     printf("Type the Camera ID to use:");
     scanf("%d",&IDSelected);
-    pCam = camList.GetByIndex(IDSelected);
-
+    
+    //pCam = camList.GetByIndex(IDSelected);
+    
     try
     {
-        // Retrieve TL device nodemap and print device information
-        nodeMapTLDevice = pCam->GetTLDeviceNodeMap();
-        printf("Image Size:%s",(int)pCam->Width);
+        printf("Initialize camera");
+        
         // Initialize camera
-        /*pCam->Init();
+        pCam->Init();
+        // Retrieve TL device nodemap and print device information
+        INodeMap& nodeMapTLDevice = pCam->GetTLDeviceNodeMap();
+        printf("Image Size:%d",(int)pCam->Width.GetValue());
 
         // Retrieve GenICam nodemap
         INodeMap& nodeMap = pCam->GetNodeMap();
-
-        // Acquire images
-        result = result | AcquireImages(pCam, nodeMap, nodeMapTLDevice);
-
-        // Deinitialize camera
-        pCam->DeInit();
-        */
+        
     }
     catch (Spinnaker::Exception& e)
     {
         cout << "Error: " << e.what() << endl;
     }
+    // Deinitialize camera
+    pCam->DeInit();
 
 
     //
