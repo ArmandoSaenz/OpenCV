@@ -58,9 +58,12 @@ CameraList camList; //This object stores the list of detected cameras
 CameraPtr pCam = nullptr; //This object stores the camera direction
 FeatureList_t features;  //This object stores the camera features
 double dt;
+double dtf;
 chrono::duration<double> elapsed;
+chrono::duration<double> elapsedf;
 auto start = chrono::high_resolution_clock::now();
 auto finish = chrono::high_resolution_clock::now();
+auto ffinish = chrono::high_resolution_clock::now();
 int frameNum = 1;
 int frameSkip = 20;
 //***************************************************************************
@@ -179,6 +182,7 @@ int main()//Main method
     {
         start = chrono::high_resolution_clock::now();
         frame = pCam->GetNextImage(); //Get the actual frame
+        ffinish = chrono::high_resolution_clock::now();
         XPadding = frame->GetXPadding(); //Horizontal padding
         YPadding = frame->GetYPadding(); //Vertical padding
         rowsize = frame->GetWidth(); //Image width
@@ -189,11 +193,16 @@ int main()//Main method
             imshow("Camera",cvimg);
         if(waitKey(1)>=0)
             break;
-        elapsed = finish - start;
-        dt = elapsed.count()*1000;
         finish = chrono::high_resolution_clock::now();
-        printf("Delay %d:%f \r\n",i,dt);
-        fprintf(datos,"%f \r\n",dt);
+        //--------------------------------------------
+        elapsedf = ffinish - start;
+        dtf = elapsedf.count()*1000;
+        //--------------------------------------------
+        elapsed = finish - start;
+        dt = elapsedf.count()*1000;
+        //--------------------------------------------
+        //printf("Delay %d:%f \t Delay Frame %d:%f \r\n",i,dt,i,dtf);
+        fprintf(datos,"%f,%f;\r\n",dt,dtf);
     }
     fprintf(datos,"];",dt);
     //---------------------------------------------------------------------
